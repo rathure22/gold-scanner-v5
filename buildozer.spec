@@ -14,7 +14,9 @@ android.sdk = 34
 android.ndk = 25b
 android.archs = arm64-v8a
 android.accept_sdk_license_agreement = True
+p4a.fork = kivy
 p4a.branch = master
+p4a.bootstrap = sdl2
 [buildozer]
 log_level = 1
 warn_on_root = 1

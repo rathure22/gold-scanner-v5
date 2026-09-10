@@ -13,7 +13,7 @@ jobs:
         run: sudo apt update && sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev libtinfo5
       - name: Install Buildozer
         run: pip install Cython==0.29.36 buildozer==1.5.0
-      - name: Pre-download SDK to create licenses
+      - name: Download SDK + Accept license + Install Build-Tools 37
         run: |
           buildozer android debug || true
           SDK=~/.buildozer/android/platform/android-sdk
@@ -21,10 +21,11 @@ jobs:
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55a" > $SDK/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $SDK/licenses/android-sdk-license
           echo "24333f8a63b6825ea9c5514f83c1059b8ea731e7" >> $SDK/licenses/android-sdk-license
-          cp $SDK/licenses/android-sdk-license ~/.android/licenses/
+          echo "y" > $SDK/licenses/android-sdk-preview-license
+          cp $SDK/licenses/* ~/.android/licenses/ || true
           yes | $SDK/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          $SDK/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "build-tools;37.0.0" || true
-      - name: Build APK Final
+          yes | $SDK/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "build-tools;37.0.0" || true
+      - name: Build APK Final Android 14+
         run: buildozer android debug
       - name: Upload APK
         uses: actions/upload-artifact@v4
