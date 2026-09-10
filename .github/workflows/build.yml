@@ -21,22 +21,23 @@ jobs:
         with:
           python-version: '3.11'
 
-    - name: Set up Java 17
+      - name: Set up Java 17
       uses: actions/setup-java@v4
       with:
         distribution: 'temurin'
         java-version: '17'
 
-    - name: Install Buildozer
-      run: |
-        pip install --upgrade pip
-        pip install "Cython<3.0.0" buildozer
-
-    - name: Build APK
-      env:
-        APP_ANDROID_ACCEPT_SDK_LICENSE: "y"
-      run: |
+      - name: Build APK
+        run: |
+        # Suguon si buildozer nga i-download daan ang SDK components para makit-an ang sdkmanager
+        buildozer android status || true
+        
+        # Mano-mano nga i-accept ang tanang licenses sa buildozer SDK folder
+        yes | ~/.buildozer/android/platform/android-sdk/cmdline-tools/latest/bin/sdkmanager --licenses || true
+        
+        # Sugdan na ang tinuod nga pag-build sa APK
         buildozer -v android debug
+
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
