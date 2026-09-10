@@ -13,18 +13,24 @@ jobs:
         run: sudo apt update && sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev libtinfo5
       - name: Install Buildozer
         run: pip install Cython==0.29.36 buildozer==1.5.0
-      - name: Bootstrap SDK + Accept license for Build-Tools 37
+      - name: Force p4a to old stable with Build-Tools 34 only
         run: |
           buildozer android debug || true
+          rm -rf ~/.buildozer/android/platform/python-for-android
+          git clone https://github.com/kivy/python-for-android.git ~/.buildozer/android/platform/python-for-android
+          cd ~/.buildozer/android/platform/python-for-android
+          git fetch --tags
+          git checkout 2024.01.21 || git checkout 2023.12.10 || git checkout master
+      - name: Accept licenses + Install Build-Tools 34
+        run: |
           SDK=~/.buildozer/android/platform/android-sdk
           mkdir -p $SDK/licenses ~/.android/licenses
           echo "8933bad161af4178b1185d1a37fbf41ea5269c55a" > $SDK/licenses/android-sdk-license
           echo "d56f5187479451eabf01fb78af6dfcb131a6481e" >> $SDK/licenses/android-sdk-license
           echo "24333f8a63b6825ea9c5514f83c1059b8ea731e7" >> $SDK/licenses/android-sdk-license
-          echo "y" > $SDK/licenses/android-sdk-preview-license
           cp $SDK/licenses/* ~/.android/licenses/ || true
           yes | $SDK/cmdline-tools/latest/bin/sdkmanager --licenses || true
-          yes | $SDK/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" "build-tools;37.0.0" || true
+          yes | $SDK/cmdline-tools/latest/bin/sdkmanager "platforms;android-34" "build-tools;34.0.0" || true
       - name: Build APK Final Android 14+
         run: buildozer android debug
       - name: Upload APK
