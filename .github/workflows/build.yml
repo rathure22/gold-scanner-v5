@@ -24,8 +24,8 @@ jobs:
           echo "y" > $SDK/licenses/android-sdk-preview-license
           cp $SDK/licenses/* ~/.android/licenses/ || true
           yes | $TOOL --licenses || true
-          yes | $TOOL "platforms;android-34" "build-tools;34.0.0" "build-tools;37.0.0" || true
-          ls $SDK/build-tools/
+          yes | $TOOL --sdk_root=$SDK --install "platforms;android-34" "build-tools;34.0.0" "build-tools;37.0.0" || true
+          ls $SDK/build-tools/ || true
           cp $SDK/build-tools/34.0.0/aidl $SDK/build-tools/37.0.0/aidl || true
           chmod +x $SDK/build-tools/*/aidl || true
       - name: Build APK Final Android 14+
