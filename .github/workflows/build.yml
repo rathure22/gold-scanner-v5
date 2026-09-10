@@ -11,7 +11,7 @@ jobs:
         with: { distribution: 'temurin', java-version: '17' }
       - run: sudo apt update && sudo apt install -y git zip unzip autoconf libtool pkg-config zlib1g-dev libncurses-dev cmake libffi-dev libssl-dev libtinfo5
       - run: pip install Cython==0.29.36 buildozer==1.5.0
-      - name: Bootstrap + Force Build-Tools 37 with Aidl
+      - name: Bootstrap + Install Build-Tools 37 + Fix Aidl
         run: |
           buildozer android debug || true
           SDK=~/.buildozer/android/platform/android-sdk
@@ -25,6 +25,7 @@ jobs:
           cp $SDK/licenses/* ~/.android/licenses/ || true
           yes | $TOOL --licenses || true
           yes | $TOOL "platforms;android-34" "build-tools;34.0.0" "build-tools;37.0.0" || true
+          ls $SDK/build-tools/
           cp $SDK/build-tools/34.0.0/aidl $SDK/build-tools/37.0.0/aidl || true
           chmod +x $SDK/build-tools/*/aidl || true
       - name: Build APK Final Android 14+
